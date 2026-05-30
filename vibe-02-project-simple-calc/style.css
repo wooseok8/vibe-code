@@ -1,3 +1,55 @@
+/* ── CSS 변수: 다크 테마 (기본) ── */
+:root {
+  --bg-body:          #0d1117;
+  --bg-calc:          #161b22;
+  --bg-display:       #0d1117;
+  --border:           #30363d;
+  --text-primary:     #e6edf3;
+  --text-muted:       #484f58;
+  --shadow:           rgba(0, 0, 0, 0.6);
+
+  --num-bg:           #21262d;
+  --num-hover:        #2d333b;
+  --op-bg:            #1c2d4a;
+  --op-color:         #58a6ff;
+  --op-hover:         #253a5e;
+  --clear-bg:         #3d1a1a;
+  --clear-color:      #f85149;
+  --clear-hover:      #5a2020;
+  --back-bg:          #2d2416;
+  --back-color:       #e3b341;
+  --back-hover:       #3d3020;
+  --equal-bg:         #1a3d28;
+  --equal-color:      #3fb950;
+  --equal-hover:      #205a35;
+}
+
+/* ── CSS 변수: 라이트 테마 ── */
+[data-theme="light"] {
+  --bg-body:          #f0f2f5;
+  --bg-calc:          #ffffff;
+  --bg-display:       #f6f8fa;
+  --border:           #d0d7de;
+  --text-primary:     #1f2328;
+  --text-muted:       #8c959f;
+  --shadow:           rgba(0, 0, 0, 0.12);
+
+  --num-bg:           #f6f8fa;
+  --num-hover:        #e8ecf0;
+  --op-bg:            #ddeeff;
+  --op-color:         #0969da;
+  --op-hover:         #c5deff;
+  --clear-bg:         #ffeef0;
+  --clear-color:      #cf222e;
+  --clear-hover:      #ffd7da;
+  --back-bg:          #fff8e0;
+  --back-color:       #9a6700;
+  --back-hover:       #fff0b3;
+  --equal-bg:         #dafbe1;
+  --equal-color:      #116329;
+  --equal-hover:      #b7f5c6;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -9,25 +61,75 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0d1117;
+  background: var(--bg-body);
   font-family: 'Segoe UI', sans-serif;
+  transition: background 0.3s;
 }
 
-.calculator {
+/* ── 앱 래퍼 ── */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   width: 320px;
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* ── 앱 헤더 ── */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--bg-calc);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+}
+
+.app-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+}
+
+/* ── 테마 토글 버튼 ── */
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg-display);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.theme-toggle:hover {
+  background: var(--num-hover);
+  transform: rotate(20deg);
+}
+
+/* ── 계산기 ── */
+.calculator {
+  background: var(--bg-calc);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  padding: 16px 24px 24px;
+  box-shadow: 0 12px 40px var(--shadow);
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 #display {
   width: 100%;
-  background: #0d1117;
-  border: 1px solid #30363d;
+  background: var(--bg-display);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  color: #e6edf3;
+  color: var(--text-primary);
   font-size: 1.8rem;
   text-align: right;
   padding: 14px 18px;
@@ -36,10 +138,11 @@ body {
   letter-spacing: 1px;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
 }
 
 #display::placeholder {
-  color: #484f58;
+  color: var(--text-muted);
 }
 
 .buttons {
@@ -59,47 +162,24 @@ body {
   user-select: none;
 }
 
-.btn:active {
-  transform: scale(0.93);
-}
+.btn:active { transform: scale(0.93); }
 
-/* Number buttons */
-.btn.number {
-  background: #21262d;
-  color: #e6edf3;
-}
-.btn.number:hover { background: #2d333b; }
+.btn.number  { background: var(--num-bg);   color: var(--text-primary); }
+.btn.number:hover  { background: var(--num-hover); }
 
-/* Operator buttons */
-.btn.operator {
-  background: #1c2d4a;
-  color: #58a6ff;
-}
-.btn.operator:hover { background: #253a5e; }
+.btn.operator { background: var(--op-bg);   color: var(--op-color); }
+.btn.operator:hover { background: var(--op-hover); }
 
-/* Clear */
-.btn.clear {
-  background: #3d1a1a;
-  color: #f85149;
-}
-.btn.clear:hover { background: #5a2020; }
+.btn.clear   { background: var(--clear-bg); color: var(--clear-color); }
+.btn.clear:hover  { background: var(--clear-hover); }
 
-/* Backspace */
-.btn.back {
-  background: #2d2416;
-  color: #e3b341;
-}
-.btn.back:hover { background: #3d3020; }
+.btn.back    { background: var(--back-bg);  color: var(--back-color); }
+.btn.back:hover   { background: var(--back-hover); }
 
-/* Equal */
-.btn.equal {
-  background: #1a3d28;
-  color: #3fb950;
-  font-size: 1.3rem;
-}
-.btn.equal:hover { background: #205a35; }
+.btn.equal   { background: var(--equal-bg); color: var(--equal-color); font-size: 1.3rem; }
+.btn.equal:hover  { background: var(--equal-hover); }
 
-/* Error shake */
+/* ── 에러 흔들림 ── */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   25%       { transform: translateX(-6px); }
@@ -107,5 +187,5 @@ body {
 }
 .shake {
   animation: shake 0.3s ease;
-  color: #f85149 !important;
+  color: var(--clear-color) !important;
 }

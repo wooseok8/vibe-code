@@ -1,6 +1,24 @@
 const display = document.getElementById('display');
 const history = [];
 
+// ── 테마 토글 ──────────────────────────────────
+const toggleBtn  = document.getElementById('theme-toggle');
+const toggleIcon = toggleBtn.querySelector('.toggle-icon');
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  toggleIcon.textContent = theme === 'light' ? '🌙' : '☀️';
+  localStorage.setItem('calc-theme', theme);
+}
+
+// 저장된 테마 복원 (없으면 다크)
+applyTheme(localStorage.getItem('calc-theme') || 'dark');
+
+toggleBtn.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  applyTheme(current === 'light' ? 'dark' : 'light');
+});
+
 function append(value) {
   display.value += value;
 }

@@ -8,6 +8,14 @@
 </head>
 <body>
 
+  <div class="app-wrapper">
+  <header class="app-header">
+    <span class="app-title">Simple Calculator</span>
+    <button id="theme-toggle" class="theme-toggle" title="테마 변경">
+      <span class="toggle-icon">☀️</span>
+    </button>
+  </header>
+
   <div class="calculator">
     <input type="text" id="display" readonly placeholder="0">
     <div class="buttons">
@@ -37,6 +45,7 @@
       <button class="btn operator" data-value="+">+</button>
       <button class="btn equal"    data-value="=">=</button>
     </div>
+  </div>
   </div>
 
   <script src="script.js"></script>
