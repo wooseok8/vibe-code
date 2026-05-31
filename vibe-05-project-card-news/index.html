@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card News — 뉴스 카드뷰 요약기</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- API Key 모달 -->
+  <div id="api-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-icon">📰</div>
+      <h2>Card News</h2>
+      <p>API Key를 입력해 최신 뉴스를 불러오세요</p>
+
+      <div class="input-group">
+        <label>NewsAPI Key <span class="required">*</span></label>
+        <input type="text" id="news-key" placeholder="NewsAPI.org API Key">
+        <a href="https://newsapi.org/register" target="_blank" rel="noopener" class="hint-link">무료 발급 →</a>
+      </div>
+
+      <div class="input-group">
+        <label>OpenAI API Key <span class="optional">(선택 — AI 요약 기능)</span></label>
+        <input type="text" id="openai-key" placeholder="sk-... (없으면 기사 설명 표시)">
+        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener" class="hint-link">발급 →</a>
+      </div>
+
+      <button id="modal-submit" class="btn-primary">시작하기</button>
+    </div>
+  </div>
+
+  <!-- 메인 앱 -->
+  <div id="app" class="hidden">
+
+    <!-- 헤더 -->
+    <header class="app-header">
+      <h1>📰 Card News</h1>
+      <div class="search-wrap">
+        <input type="text" id="search-input" placeholder="키워드 검색...">
+        <button id="search-btn" class="btn-icon">🔍</button>
+      </div>
+      <button id="settings-btn" class="btn-icon" title="API Key 변경">⚙️</button>
+    </header>
+
+    <!-- 카테고리 탭 -->
+    <nav class="category-nav">
+      <button class="cat-btn active" data-cat="general">📰 전체</button>
+      <button class="cat-btn" data-cat="technology">💻 IT/기술</button>
+      <button class="cat-btn" data-cat="business">💼 비즈니스</button>
+      <button class="cat-btn" data-cat="science">🌍 과학/환경</button>
+      <button class="cat-btn" data-cat="health">🏥 건강</button>
+      <button class="cat-btn" data-cat="sports">⚽ 스포츠</button>
+      <button class="cat-btn" data-cat="entertainment">🎬 엔터</button>
+    </nav>
+
+    <!-- 상태 표시 -->
+    <div id="status-bar" class="status-bar hidden"></div>
+
+    <!-- 카드 그리드 -->
+    <main class="card-grid" id="card-grid"></main>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
