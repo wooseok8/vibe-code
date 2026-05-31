@@ -58,43 +58,92 @@ async function loadTrend(categoryId) {
   document.getElementById('chart-section').classList.add('hidden');
 
   try {
-    const params = new URLSearchParams({
-      part:           'statistics,snippet',
-      chart:          'mostPopular',
-      regionCode:     'KR',
-      maxResults:     20,
-      key:            apiKey,
-    });
-    if (categoryId !== '0') params.set('videoCategoryId', categoryId);
+    // 1차 시도: mostPopular 차트
+    let items = await fetchMostPopular(categoryId);
 
-    const res  = await fetch(`${YT_API}/videos?${params}`);
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
+    // mostPopular 미지원 카테고리 → 검색 기반으로 대체
+    if (!items.length) {
+      items = await fetchSearchFallback(categoryId);
+      setStatus(`📈 ${catLabel} 최근 인기 영상 ${items.length}개`);
+    } else {
+      setStatus(`🔥 ${catLabel} 인기 급상승 ${items.length}개 (한국 기준)`);
+    }
 
-    allVideos = (data.items || []).map((v) => {
-      const s        = v.statistics || {};
-      const views    = parseInt(s.viewCount    || 0);
-      const likes    = parseInt(s.likeCount    || 0);
-      const comments = parseInt(s.commentCount || 0);
-      const engagement = views > 0
-        ? parseFloat(((likes + comments) / views * 100).toFixed(3))
-        : 0;
-      return {
-        id:          v.id,
-        title:       v.snippet.title,
-        channel:     v.snippet.channelTitle,
-        thumbnail:   v.snippet.thumbnails?.medium?.url || '',
-        publishedAt: v.snippet.publishedAt,
-        views, likes, comments, engagement,
-      };
-    });
-
+    allVideos = items;
     renderBySort();
-    setStatus(`🔥 ${catLabel} 인기 급상승 ${allVideos.length}개 (한국 기준)`);
   } catch (err) {
     renderEmpty(`오류: ${err.message}`);
     setStatus('');
   }
+}
+
+// mostPopular 차트 (공식 인기 급상승)
+async function fetchMostPopular(categoryId) {
+  const params = new URLSearchParams({
+    part:       'statistics,snippet',
+    chart:      'mostPopular',
+    regionCode: 'KR',
+    maxResults: 20,
+    key:        apiKey,
+  });
+  if (categoryId !== '0') params.set('videoCategoryId', categoryId);
+
+  const res  = await fetch(`${YT_API}/videos?${params}`);
+  const data = await res.json();
+  if (data.error) return []; // 에러 시 빈 배열 반환 → 폴백 진행
+  return parseVideoItems(data.items || []);
+}
+
+// 폴백: 카테고리 검색 + 조회수 정렬 (최근 30일)
+async function fetchSearchFallback(categoryId) {
+  const since = new Date();
+  since.setDate(since.getDate() - 30);
+
+  const searchParams = new URLSearchParams({
+    part:             'snippet',
+    type:             'video',
+    order:            'viewCount',
+    regionCode:       'KR',
+    relevanceLanguage:'ko',
+    maxResults:       20,
+    publishedAfter:   since.toISOString(),
+    key:              apiKey,
+  });
+  if (categoryId !== '0') searchParams.set('videoCategoryId', categoryId);
+
+  const searchRes  = await fetch(`${YT_API}/search?${searchParams}`);
+  const searchData = await searchRes.json();
+  if (searchData.error) throw new Error(searchData.error.message);
+
+  const ids = (searchData.items || []).map((i) => i.id.videoId).join(',');
+  if (!ids) return [];
+
+  const statsRes  = await fetch(`${YT_API}/videos?part=statistics,snippet&id=${ids}&key=${apiKey}`);
+  const statsData = await statsRes.json();
+  if (statsData.error) throw new Error(statsData.error.message);
+
+  return parseVideoItems(statsData.items || []);
+}
+
+// 공통 파싱
+function parseVideoItems(items) {
+  return items.map((v) => {
+    const s        = v.statistics || {};
+    const views    = parseInt(s.viewCount    || 0);
+    const likes    = parseInt(s.likeCount    || 0);
+    const comments = parseInt(s.commentCount || 0);
+    const engagement = views > 0
+      ? parseFloat(((likes + comments) / views * 100).toFixed(3))
+      : 0;
+    return {
+      id:          v.id,
+      title:       v.snippet.title,
+      channel:     v.snippet.channelTitle,
+      thumbnail:   v.snippet.thumbnails?.medium?.url || '',
+      publishedAt: v.snippet.publishedAt,
+      views, likes, comments, engagement,
+    };
+  });
 }
 
 // ── 검색 ────────────────────────────────────────
