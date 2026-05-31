@@ -29,12 +29,35 @@
     <!-- 헤더 -->
     <header class="app-header">
       <h1>▶️ YouTube Trend Dashboard</h1>
-      <div class="search-wrap">
-        <input type="text" id="search-input" placeholder="키워드 입력 (예: 인공지능, 주식, 먹방)">
-        <button id="search-btn" class="btn-primary">검색</button>
+      <div class="tab-wrap">
+        <button class="tab-btn active" data-tab="search">🔍 키워드 검색</button>
+        <button class="tab-btn" data-tab="trend">🔥 지금 트렌드</button>
       </div>
       <button id="settings-btn" class="btn-icon" title="API Key 변경">⚙️</button>
     </header>
+
+    <!-- 키워드 검색 패널 -->
+    <div id="panel-search" class="panel">
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="키워드 입력 (예: 인공지능, 주식, 먹방)">
+        <button id="search-btn" class="btn-primary">검색</button>
+      </div>
+    </div>
+
+    <!-- 트렌드 패널 -->
+    <div id="panel-trend" class="panel hidden">
+      <nav class="trend-nav">
+        <button class="trend-cat active" data-cat="0">📰 전체</button>
+        <button class="trend-cat" data-cat="10">🎵 음악</button>
+        <button class="trend-cat" data-cat="20">🎮 게임</button>
+        <button class="trend-cat" data-cat="24">🎬 엔터</button>
+        <button class="trend-cat" data-cat="25">📺 뉴스</button>
+        <button class="trend-cat" data-cat="17">⚽ 스포츠</button>
+        <button class="trend-cat" data-cat="28">💻 IT/과학</button>
+        <button class="trend-cat" data-cat="22">👤 일상/브이로그</button>
+        <button class="trend-cat" data-cat="27">📚 교육</button>
+      </nav>
+    </div>
 
     <!-- 정렬 + 상태 -->
     <div class="toolbar">

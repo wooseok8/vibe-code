@@ -118,8 +118,69 @@ input:focus { outline: none; border-color: var(--blue); }
 
 .app-header h1 { font-size: 1.1rem; flex-shrink: 0; }
 
-.search-wrap { display: flex; gap: 8px; flex: 1; min-width: 240px; }
-.search-wrap input { flex: 1; }
+/* ── 탭 ── */
+.tab-wrap {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+}
+
+.tab-btn {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab-btn:hover { border-color: var(--yt-red); color: var(--yt-red); }
+.tab-btn.active {
+  background: var(--yt-red);
+  color: #fff;
+  border-color: var(--yt-red);
+}
+
+/* ── 패널 ── */
+.panel {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+}
+
+.search-bar { display: flex; gap: 8px; }
+.search-bar input { flex: 1; }
+
+/* ── 트렌드 카테고리 ── */
+.trend-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.trend-nav::-webkit-scrollbar { display: none; }
+
+.trend-cat {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s;
+}
+.trend-cat:hover { border-color: var(--yt-red); color: var(--yt-red); }
+.trend-cat.active {
+  background: var(--yt-red);
+  color: #fff;
+  border-color: var(--yt-red);
+  font-weight: 700;
+}
 
 /* ── 툴바 ── */
 .toolbar {

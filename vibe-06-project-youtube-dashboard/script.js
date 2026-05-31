@@ -2,6 +2,7 @@ let apiKey     = '';
 let allVideos  = [];
 let sortBy     = 'engagement';
 let chartInst  = null;
+let activeTab  = 'search';
 
 const YT_API = 'https://www.googleapis.com/youtube/v3';
 
@@ -22,6 +23,79 @@ function submitKey() {
 document.getElementById('settings-btn').addEventListener('click', () => {
   document.getElementById('api-modal').classList.remove('hidden');
 });
+
+// ── 탭 전환 ─────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeTab = btn.dataset.tab;
+
+    document.getElementById('panel-search').classList.toggle('hidden', activeTab !== 'search');
+    document.getElementById('panel-trend').classList.toggle('hidden', activeTab !== 'trend');
+
+    // 트렌드 탭 진입 시 자동 로드
+    if (activeTab === 'trend') {
+      const activeCat = document.querySelector('.trend-cat.active');
+      loadTrend(activeCat?.dataset.cat || '0');
+    }
+  });
+});
+
+// ── 트렌드 카테고리 ──────────────────────────────
+document.querySelectorAll('.trend-cat').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.trend-cat').forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadTrend(btn.dataset.cat);
+  });
+});
+
+async function loadTrend(categoryId) {
+  const catLabel = document.querySelector(`.trend-cat[data-cat="${categoryId}"]`)?.textContent || '전체';
+  renderSkeletons(12);
+  setStatus(`<span class="spinner"></span>${catLabel} 트렌드 불러오는 중...`);
+  document.getElementById('chart-section').classList.add('hidden');
+
+  try {
+    const params = new URLSearchParams({
+      part:           'statistics,snippet',
+      chart:          'mostPopular',
+      regionCode:     'KR',
+      maxResults:     20,
+      key:            apiKey,
+    });
+    if (categoryId !== '0') params.set('videoCategoryId', categoryId);
+
+    const res  = await fetch(`${YT_API}/videos?${params}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+
+    allVideos = (data.items || []).map((v) => {
+      const s        = v.statistics || {};
+      const views    = parseInt(s.viewCount    || 0);
+      const likes    = parseInt(s.likeCount    || 0);
+      const comments = parseInt(s.commentCount || 0);
+      const engagement = views > 0
+        ? parseFloat(((likes + comments) / views * 100).toFixed(3))
+        : 0;
+      return {
+        id:          v.id,
+        title:       v.snippet.title,
+        channel:     v.snippet.channelTitle,
+        thumbnail:   v.snippet.thumbnails?.medium?.url || '',
+        publishedAt: v.snippet.publishedAt,
+        views, likes, comments, engagement,
+      };
+    });
+
+    renderBySort();
+    setStatus(`🔥 ${catLabel} 인기 급상승 ${allVideos.length}개 (한국 기준)`);
+  } catch (err) {
+    renderEmpty(`오류: ${err.message}`);
+    setStatus('');
+  }
+}
 
 // ── 검색 ────────────────────────────────────────
 document.getElementById('search-btn').addEventListener('click', doSearch);
